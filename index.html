@@ -1,614 +1,622 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>wahi · 당신의 커피 취향이 시작되는 곳</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Raleway:wght@100;200;300;400&family=Urbanist:wght@300;400;500&display=swap" rel="stylesheet">
-<style>
-:root {
-  --wahi-white: #FFFFFF;
-  --wahi-ink: #191818;
-  --wahi-espresso: #3B2314;
-  --wahi-crema: #F5ECD7;
-  --text-primary: #191818;
-  --text-muted: rgba(25,24,24,.52);
-  --text-accent: #3B2314;
-  --text-on-dark: #F5ECD7;
-  --text-on-dark-muted: rgba(245,236,215,.55);
-  --font-display: 'Raleway', 'Pretendard Variable', sans-serif;
-  --font-body: 'Pretendard Variable', system-ui, -apple-system, sans-serif;
-  --font-body-en: 'Urbanist', sans-serif;
-  --weight-light: 300;
-  --dur-fast: 120ms;
-  --dur-base: 200ms;
-  --dur-slow: 380ms;
-  --ease-standard: cubic-bezier(.4,0,.2,1);
-  --press-opacity: .72;
-}
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Wahi — 당신의 커피 취향이 시작되는 곳</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Raleway:wght@100;200;300;400&family=Urbanist:wght@300;400;500&display=swap"
+    rel="stylesheet">
 
-* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  <!-- css 연결하기 -->
+  <link rel="stylesheet" href="./css/style.css">
 
-html, body {
-  height: 100%;
-  background: #0f0f0f;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--font-body);
-  -webkit-font-smoothing: antialiased;
-}
+  <!-- 파비콘 -->
+  <link rel="icon" type="image/png" sizes="32x32" href="./img/logo.png">
 
-/* ── Phone shell ─────────────────────────── */
-#app {
-  position: relative;
-  width: 390px;
-  height: 844px;
-  background: var(--wahi-white);
-  overflow: hidden;
-  /* On actual mobile, fill the screen */
-}
+  <!-- AOS CSS 추가 -->
+  <link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css">
 
-@media (max-width: 430px) {
-  html, body { background: var(--wahi-white); }
-  #app { width: 100%; height: 100dvh; height: 100vh; }
-}
-
-/* ── Screen system ───────────────────────── */
-.screen {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  background: var(--wahi-white);
-  transition: transform 320ms var(--ease-standard), opacity 320ms var(--ease-standard);
-}
-.screen--ink { background: var(--wahi-ink); color: var(--text-on-dark); }
-.screen--hidden { pointer-events: none; opacity: 0; transform: translateX(32px); }
-.screen--back { pointer-events: none; opacity: 0; transform: translateX(-24px); }
-
-/* ── Status bar ──────────────────────────── */
-.status-bar {
-  flex: none;
-  height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 22px 0 24px;
-  font-family: var(--font-body-en);
-  font-size: 14px;
-  font-weight: 600;
-  letter-spacing: .02em;
-}
-.status-right { display:flex; align-items:center; gap:6px; }
-.signal-bars { display:flex; align-items:flex-end; gap:2px; height:10px; }
-.signal-bars i { width:3px; background:currentColor; border-radius:.5px; display:block; }
-.signal-bars i:nth-child(1){height:4px} .signal-bars i:nth-child(2){height:6px}
-.signal-bars i:nth-child(3){height:8px} .signal-bars i:nth-child(4){height:10px}
-.battery { width:22px; height:11px; border:1.5px solid currentColor; border-radius:2.5px; position:relative; opacity:.85; }
-.battery::after { content:""; position:absolute; right:-4px; top:2.5px; width:2px; height:6px; background:currentColor; border-radius:0 1px 1px 0; }
-.battery-fill { position:absolute; inset:1.5px; width:72%; background:currentColor; border-radius:1px; }
-
-/* ── Progress bar ────────────────────────── */
-.progress-bar { flex:none; height:3px; background:rgba(25,24,24,.10); }
-.progress-bar-fill { height:100%; background:var(--wahi-espresso); transition:width var(--dur-slow) var(--ease-standard); }
-
-/* ── Screen body ─────────────────────────── */
-.body { flex:1; display:flex; flex-direction:column; padding:0 20px 36px; min-height:0; overflow-y:auto; }
-
-/* ── Nav ─────────────────────────────────── */
-.top-nav { flex:none; height:50px; display:flex; align-items:center; margin:0 -4px; }
-.btn-back { width:40px; height:40px; display:flex; align-items:center; justify-content:center; background:transparent; border:0; cursor:pointer; color:var(--text-primary); }
-.screen--ink .btn-back { color:var(--text-on-dark); }
-.btn-back svg { width:20px; height:20px; }
-
-/* ── Eyebrow / step ──────────────────────── */
-.step-label { font-family:var(--font-body-en); font-size:12px; letter-spacing:.28em; font-weight:500; color:var(--text-accent); text-transform:uppercase; }
-.section-label { font-family:var(--font-body-en); font-size:11px; letter-spacing:.3em; font-weight:500; color:var(--text-muted); text-transform:uppercase; }
-.screen--ink .section-label { color:var(--text-on-dark-muted); }
-
-/* ── Headlines ───────────────────────────── */
-.q-headline { font-family:var(--font-display); font-weight:var(--weight-light); font-size:29px; line-height:1.34; letter-spacing:-.01em; white-space:pre-line; }
-.q-sub { font-size:14px; line-height:1.72; color:var(--text-muted); white-space:pre-line; }
-.screen--ink .q-sub { color:var(--text-on-dark-muted); }
-.q-hint { font-size:12.5px; line-height:1.55; color:var(--text-accent); }
-
-/* ── Cards ───────────────────────────────── */
-.cards { display:flex; flex-direction:column; gap:12px; }
-.card {
-  position:relative; display:flex; align-items:center; gap:14px;
-  width:100%; text-align:left; min-height:64px; padding:14px 16px;
-  background:var(--wahi-white); color:var(--text-primary);
-  border:1px solid rgba(25,24,24,.18); border-radius:0; cursor:pointer;
-  transition: background var(--dur-base) var(--ease-standard),
-              color var(--dur-base) var(--ease-standard),
-              border-color var(--dur-base) var(--ease-standard);
-  font-family: var(--font-body);
-}
-.card-main { flex:1; min-width:0; display:flex; flex-direction:column; gap:3px; }
-.card-title { font-size:15px; font-weight:500; line-height:1.35; letter-spacing:-.005em; }
-.card-sub { font-size:12.5px; font-weight:400; line-height:1.4; color:var(--text-muted); }
-.card-chev { flex:none; color:rgba(25,24,24,.32); display:flex; }
-.card-chev svg { width:16px; height:16px; }
-.card--sel { background:var(--wahi-ink); color:var(--text-on-dark); border-color:var(--wahi-ink); }
-.card--sel .card-sub { color:var(--text-on-dark-muted); }
-.card--sel .card-chev { color:rgba(255,255,255,.55); }
-.card:active { opacity:.82; }
-
-/* ── Buttons ─────────────────────────────── */
-.actions { display:flex; flex-direction:column; gap:10px; }
-.btn {
-  width:100%; height:56px; display:flex; align-items:center; justify-content:center;
-  font-family:var(--font-body); font-size:15px; font-weight:500; letter-spacing:.01em;
-  border-radius:0; border:1px solid transparent; cursor:pointer;
-  transition: background var(--dur-base) var(--ease-standard), opacity var(--dur-fast) var(--ease-standard);
-}
-.btn-primary { background:var(--wahi-ink); color:var(--wahi-white); border-color:var(--wahi-ink); }
-.btn-primary:active { opacity:var(--press-opacity); }
-.btn-disabled { background:rgba(25,24,24,.10); color:rgba(25,24,24,.35); border-color:transparent; cursor:not-allowed; pointer-events:none; }
-.btn-secondary { background:var(--wahi-white); color:var(--text-primary); border-color:rgba(25,24,24,.7); }
-.btn-secondary:active { opacity:var(--press-opacity); }
-
-/* ── Splash ──────────────────────────────── */
-.splash-wrap { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; position:relative; }
-.splash-logo-text {
-  font-family: 'Raleway', sans-serif;
-  font-weight: 100;
-  font-size: 72px;
-  letter-spacing: 8px;
-  color: var(--wahi-crema);
-}
-.splash-i-accent { position:relative; }
-.splash-i-accent::after {
-  content: "";
-  position: absolute;
-  bottom: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 2px;
-  height: 14px;
-  background: var(--wahi-crema);
-  border-radius: 1px;
-  animation: smoke 2s ease-in-out infinite;
-}
-@keyframes smoke {
-  0%,100% { opacity:.8; transform:translateX(-50%) scaleY(1); }
-  50% { opacity:.3; transform:translateX(-60%) scaleY(1.3) rotate(4deg); }
-}
-.splash-tagline { margin-top:28px; font-family:var(--font-body); font-size:13px; line-height:1.8; letter-spacing:.02em; color:var(--text-on-dark-muted); text-align:center; }
-.splash-loader { position:absolute; left:0; right:0; bottom:56px; display:flex; justify-content:center; }
-.splash-loader-track { position:relative; width:64px; height:1.5px; background:rgba(245,236,215,.18); overflow:hidden; }
-.splash-loader-track::after { content:""; position:absolute; top:0; left:0; width:40%; height:100%; background:var(--wahi-crema); animation:sweep 1.7s cubic-bezier(.4,0,.6,1) infinite; }
-@keyframes sweep { 0%{transform:translateX(-100%)} 100%{transform:translateX(350%)} }
-
-/* ── Start logo ──────────────────────────── */
-.start-logo {
-  font-family: 'Raleway', sans-serif;
-  font-weight: 100;
-  font-size: 28px;
-  letter-spacing: 4px;
-  color: var(--wahi-ink);
-}
-
-/* ── Result ──────────────────────────────── */
-.r-logo-wrap { display:flex; justify-content:center; padding:6px 0 22px; }
-.r-logo {
-  font-family: 'Raleway', sans-serif;
-  font-weight: 100;
-  font-size: 22px;
-  letter-spacing: 4px;
-  color: var(--wahi-ink);
-}
-.coffee-card { background:var(--wahi-ink); color:var(--text-on-dark); padding:24px; }
-.coffee-name { font-family:var(--font-display); font-weight:var(--weight-light); font-size:24px; line-height:1.22; }
-.coffee-brew { margin-top:8px; font-family:var(--font-body); font-size:12.5px; letter-spacing:.04em; color:var(--text-on-dark-muted); }
-.tags { display:flex; flex-wrap:wrap; gap:6px; margin-top:18px; }
-.tag { font-family:var(--font-body); font-size:11px; letter-spacing:.04em; line-height:1; padding:6px 10px; background:var(--wahi-espresso); color:var(--wahi-crema); }
-.meters { display:flex; flex-direction:column; gap:11px; margin-top:22px; }
-.meter { display:flex; align-items:center; gap:14px; }
-.meter-label { font-family:var(--font-body); font-size:12px; letter-spacing:.06em; color:var(--text-on-dark-muted); width:52px; flex:none; }
-.dots { display:flex; gap:6px; }
-.dot { width:9px; height:9px; border-radius:50%; border:1px solid rgba(245,236,215,.35); }
-.dot--on { background:var(--wahi-crema); border-color:var(--wahi-crema); }
-.coffee-info { margin-top:20px; padding-top:18px; border-top:1px solid rgba(245,236,215,.16); display:flex; flex-direction:column; gap:9px; }
-.coffee-info-row { display:flex; justify-content:space-between; gap:16px; font-family:var(--font-body); font-size:12.5px; }
-.coffee-info-key { color:var(--text-on-dark-muted); letter-spacing:.04em; flex:none; }
-.coffee-info-val { color:var(--text-on-dark); text-align:right; }
-.why-box { background:var(--wahi-crema); color:var(--wahi-ink); padding:20px; margin-top:14px; }
-.why-h { font-family:var(--font-body); font-size:13px; font-weight:600; }
-.why-b { font-family:var(--font-body); font-size:13.5px; line-height:1.78; margin-top:10px; color:rgba(25,24,24,.74); }
-.rec-wrap { margin-top:24px; }
-.rec-label { font-family:var(--font-body-en); font-size:11px; letter-spacing:.22em; font-weight:500; text-transform:uppercase; color:var(--text-muted); margin-bottom:10px; }
-.rec-sub { font-size:13.5px; color:var(--text-primary); margin:0 0 12px; }
-.rec-item { display:flex; align-items:center; justify-content:space-between; gap:12px; border:1px solid rgba(25,24,24,.18); padding:15px 16px; margin-bottom:10px; }
-.rec-name { font-size:14.5px; font-weight:500; line-height:1.35; }
-.rec-desc { font-size:12px; color:var(--text-muted); margin-top:3px; line-height:1.4; }
-.rec-chev { color:rgba(25,24,24,.3); flex:none; display:flex; }
-.r-actions { display:flex; flex-direction:column; gap:10px; margin-top:28px; }
-
-.spacer { flex:1; min-height:16px; }
-.h8 { height:8px; }
-.h12 { height:12px; }
-.h14 { height:14px; }
-.h18 { height:18px; }
-.h20 { height:20px; }
-.h24 { height:24px; }
-.h28 { height:28px; }
-</style>
 </head>
+
 <body>
-<div id="app"></div>
-
-<script>
-
-// 실시간 시계
-function updateClock() {
-  const el = document.getElementById('wahi-clock');
-  if (!el) return;
-  const now = new Date();
-  const h = now.getHours();
-  const m = String(now.getMinutes()).padStart(2, '0');
-  el.textContent = h + ':' + m;
-}
-setInterval(updateClock, 1000);
-updateClock();
-
-// ── State ──────────────────────────────────────────────
-const state = {
-  screen: 'splash',
-  level: null,     // 'beginner' | 'explorer' | 'expert'
-  step: 0,
-  answers: {},
-  history: []
-};
-
-// ── Screen definitions ─────────────────────────────────
-const FLOWS = {
-  beginner: ['b1','b2','b3','result'],
-  explorer: ['e1','e2','e3','e4','result'],
-  expert:   ['x1','x2','x3','x4','result'],
-};
-
-// ── Router ─────────────────────────────────────────────
-function goTo(screen, pushHistory = true) {
-  if (pushHistory && state.screen !== screen) state.history.push(state.screen);
-  state.screen = screen;
-  render();
-}
-
-function goBack() {
-  const prev = state.history.pop();
-  if (prev) { state.screen = prev; render(); }
-}
-
-// ── Icons ──────────────────────────────────────────────
-const ARROW_LEFT = `<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12.5 4L6.5 10l6 6M6.5 10H17"/></svg>`;
-const CHEVRON = `<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3.5L10.5 8 6 12.5"/></svg>`;
-
-// ── Components ─────────────────────────────────────────
-function statusBar(dark = false) {
-  const c = dark ? 'style="color:var(--wahi-crema)"' : '';
-  return `<div class="status-bar" ${c}>
-    <span id="wahi-clock">9:41</span>
-    <span class="status-right">
-      <span class="signal-bars"><i></i><i></i><i></i><i></i></span>
-      <span class="battery"><span class="battery-fill"></span></span>
-    </span>
-  </div>`;
-}
-
-function progressBar(value) {
-  return `<div class="progress-bar"><div class="progress-fill" style="height:100%;width:${value*100}%;background:var(--wahi-espresso);transition:width 380ms cubic-bezier(.4,0,.2,1)"></div></div>`;
-}
-
-function topNav(dark = false) {
-  return `<div class="top-nav"><button class="btn-back" onclick="goBack()" aria-label="뒤로">${ARROW_LEFT}</button></div>`;
-}
-
-function cards(items, selKey, dark = false) {
-  return `<div class="cards">${items.map((c, i) => {
-    const sel = state.answers[selKey] === i;
-    return `<button class="card${sel ? ' card--sel' : ''}" onclick="selectCard('${selKey}',${i});render()">
-      <span class="card-main">
-        <span class="card-title">${c.t}</span>
-        ${c.s ? `<span class="card-sub">${c.s}</span>` : ''}
-      </span>
-      ${c.chev ? `<span class="card-chev">${CHEVRON}</span>` : ''}
-    </button>`;
-  }).join('')}</div>`;
-}
-
-function primaryBtn(label, action, enabled) {
-  return `<button class="btn btn-primary${enabled ? '' : ' btn-disabled'}" ${enabled ? `onclick="${action}"` : ''}>${label}</button>`;
-}
-function secondaryBtn(label, action) {
-  return `<button class="btn btn-secondary" onclick="${action}">${label}</button>`;
-}
-
-function dotMeter(label, value, max = 5) {
-  const dots = Array.from({length:max}, (_,i) => `<span class="dot${i < value ? ' dot--on' : ''}"></span>`).join('');
-  return `<div class="meter"><span class="meter-label">${label}</span><span class="dots">${dots}</span></div>`;
-}
-
-function selectCard(key, idx) {
-  state.answers[key] = idx;
-}
-
-// ── Screens ────────────────────────────────────────────
-
-function renderSplash() {
-  setTimeout(() => { if (state.screen === 'splash') goTo('start'); }, 2400);
-  return `<div class="screen screen--ink" id="screen-splash">
-    ${statusBar(true)}
-    <div class="splash-wrap">
-      <div class="splash-logo-text">wah<span class="splash-i-accent">i</span></div>
-      <div class="splash-tagline">당신의 커피 취향이<br>시작되는 곳</div>
-      <div class="splash-loader"><div class="splash-loader-track"></div></div>
+  <!-- NAV -->
+  <header class="wnav" id="wnav">
+    <div class="wnav__inner">
+      <a href="#top" class="wnav__logo wahi-smoke-trigger" id="nav-logo-link" aria-label="wahi home">
+        <canvas class="wahi-smoke-canvas" width="120" height="100"></canvas>
+        <img src="./img/logo_w.png" alt="logo_w">
+      </a>
+      <nav class="wnav__menu">
+        <a href="#about" class="wnav__link">About</a>
+        <a href="#experience" class="wnav__link">Experience</a>
+        <a href="#menu" class="wnav__link">Menu</a>
+        <a href="#contact" class="wnav__link">Contact</a>
+      </nav>
+      <button class="wnav__burger" id="nav-burger" aria-label="Open menu">
+        <i data-lucide="menu"></i>
+      </button>
     </div>
-  </div>`;
-}
-
-function renderStart() {
-  const sel = state.answers['level'];
-  const levels = [
-    { t:'처음이에요', s:'커피가 아직 낯설어요', chev:true },
-    { t:'조금 알아요', s:'마셔봤지만 탐색 중이에요', chev:true },
-    { t:'잘 알아요', s:'좋아하는 커피가 있어요', chev:true },
-  ];
-  const enabled = sel !== undefined;
-  const actions = {0:'beginner', 1:'explorer', 2:'expert'};
-  const nextAction = enabled ? `startFlow('${actions[sel]}')` : '';
-  return `<div class="screen" id="screen-start">
-    ${statusBar()}
-    <div class="body">
-      <div class="top-nav" style="justify-content:flex-start; padding-left:2px;">
-        <span class="start-logo">wahi</span>
-      </div>
-      <div class="h24"></div>
-      <h1 class="q-headline">커피,\n얼마나 알고\n계세요?</h1>
-      <p class="q-sub" style="margin-top:14px">솔직하게 골라주세요.\n어떤 답이든 괜찮아요.</p>
-      <div class="spacer" style="min-height:32px"></div>
-      ${cards(levels, 'level')}
-      <div class="h8"></div>
-      <div class="spacer"></div>
-      <div class="actions">
-        ${primaryBtn('시작하기', `startFlow('${actions[sel] || ''}')`, enabled)}
-      </div>
+    <div class="wnav__overlay" id="nav-overlay">
+      <button class="wnav__close" id="nav-close" aria-label="Close menu">
+        <i data-lucide="x"></i>
+      </button>
+      <nav class="wnav__overlayMenu">
+        <a href="#about">About</a>
+        <a href="#experience">Experience</a>
+        <a href="#menu">Menu</a>
+        <a href="#contact">Contact</a>
+      </nav>
     </div>
-  </div>`;
-}
+  </header>
 
-function startFlow(level) {
-  state.level = level;
-  state.step = 0;
-  goTo(FLOWS[level][0]);
-}
+  <main>
+    <!-- HERO -->
+    <section class="hero" id="top">
 
-// Question screen factory
-function questionScreen({ id, screenId, label, step, progress, q, sub, hint, items, cta, nextAction }) {
-  const sel = state.answers[id];
-  const enabled = sel !== undefined;
-  return `<div class="screen" id="screen-${screenId}">
-    ${statusBar()}
-    ${progressBar(progress)}
-    <div class="body">
-      ${topNav()}
-      <div class="step-label">${step}</div>
-      <div class="h18"></div>
-      <h1 class="q-headline">${q}</h1>
-      ${sub ? `<p class="q-sub" style="margin-top:12px">${sub}</p>` : ''}
-      ${hint ? `<p class="q-hint" style="margin-top:10px">${hint}</p>` : ''}
-      <div class="spacer"></div>
-      ${cards(items, id)}
-      <div class="h20"></div>
-      <div class="actions">
-        ${primaryBtn(cta || '다음', nextAction, enabled)}
+      <!-- 배경 영상 추가 -->
+      <video class="hero__video" autoplay muted loop playsinline poster="./img/hero-poster.jpg">
+        <source src="./img/HERO.mp4" type="video/mp4">
+      </video>
+
+      <!-- 기존 오버레이 추가 -->
+      <div class="hero__overlay"></div>
+
+      <!-- 기존 내용 그대로 유지 -->
+      <div class="hero__inner">
+        <!-- canvas는 로고 위에 연기 파티클용 -->
+        <div class="hero__logo-wrap">
+          <canvas class="hero__smoke" id="smokeCanvas" width="260" height="220"></canvas>
+          <img class="hero_logo" src="./img/logo_w.png" alt="logo">
+        </div>
+        <h1 class="hero__tagline">당신의 커피 취향이 시작되는 곳</h1>
+        <p class="hero__sub">Where your coffee taste begins</p>
+        <div class="hero__cta">
+          <a class="wk-ghost wk-ghost--light wk-ghost--lg" href="#about">브랜드 스토리 보기</a>
+        </div>
       </div>
-    </div>
-  </div>`;
-}
+      <div class="hero__scroll" aria-hidden="true"><span>scroll</span></div>
 
-// ── Beginner screens
-function renderB1() {
-  return questionScreen({ id:'b1', screenId:'b1', label:'Beginner', step:'1 / 3', progress:1/3,
-    q:'오늘 어떤\n하루였어요?', sub:'기분에 맞는 커피를 찾아드릴게요',
-    items:[{t:'맑고 가벼운 날이에요'},{t:'조용히 쉬고 싶은 날'},{t:'집중이 필요한 날'}],
-    nextAction:"goTo('b2')" });
-}
-function renderB2() {
-  return questionScreen({ id:'b2', screenId:'b2', label:'Beginner', step:'2 / 3', progress:2/3,
-    q:'평소에 신 음식\n좋아하세요?', sub:'레모네이드, 과일, 요거트 같은 것들',
-    hint:'* 커피에도 과일처럼 상큼한 맛이 있을 수 있어요',
-    items:[{t:'네, 상큼한 게 좋아요'},{t:'보통이에요'},{t:'별로예요, 쓴맛이 좋아요'}],
-    nextAction:"goTo('b3')" });
-}
-function renderB3() {
-  return questionScreen({ id:'b3', screenId:'b3', label:'Beginner', step:'3 / 3', progress:1,
-    q:'어떤 향이 더\n끌리나요?', cta:'결과 보기',
-    items:[{t:'딸기잼 · 복숭아 · 꽃',s:'상큼하고 화사한 향'},{t:'초콜릿 · 캐러멜 · 견과',s:'달콤하고 고소한 향'},{t:'구운 빵 · 흙 · 나무',s:'묵직하고 따뜻한 향'}],
-    nextAction:"goTo('r1')" });
-}
+    </section>
 
-// ── Explorer screens
-function renderE1() {
-  return questionScreen({ id:'e1', screenId:'e1', label:'Explorer', step:'1 / 4', progress:1/4,
-    q:'산미가 있는 커피\n좋아하세요?', sub:'산미 = 커피의 상큼하고 신 맛',
-    items:[{t:'네, 산미 있는 게 좋아요'},{t:'적당하면 괜찮아요'},{t:'산미는 별로예요'}],
-    nextAction:"goTo('e2')" });
-}
-function renderE2() {
-  return questionScreen({ id:'e2', screenId:'e2', label:'Explorer', step:'2 / 4', progress:2/4,
-    q:'커피 농도는\n어떻게 좋아하세요?',
-    items:[{t:'가볍고 깔끔하게',s:'물처럼 투명한 느낌'},{t:'중간 정도',s:'너무 가볍지도 진하지도'},{t:'진하고 묵직하게',s:'입 안에 오래 남는 느낌'}],
-    nextAction:"goTo('e3')" });
-}
-function renderE3() {
-  return questionScreen({ id:'e3', screenId:'e3', label:'Explorer', step:'3 / 4', progress:3/4,
-    q:'어떤 향미를\n선호하세요?',
-    items:[{t:'과일 · 꽃향',s:'밝고 화사한 느낌'},{t:'캐러멜 · 바닐라',s:'달콤하고 부드러운 느낌'},{t:'다크초콜릿 · 견과류',s:'깊고 고소한 느낌'}],
-    nextAction:"goTo('e4')" });
-}
-function renderE4() {
-  return questionScreen({ id:'e4', screenId:'e4', label:'Explorer', step:'4 / 4', progress:1,
-    q:'오늘 어떤 방식으로\n마시고 싶으세요?', cta:'결과 보기',
-    items:[{t:'에스프레소 베이스',s:'아메리카노 · 라떼 계열'},{t:'핸드드립',s:'원두 본연의 맛을 천천히'},{t:'콜드브루',s:'차갑게 오래 우린 커피'}],
-    nextAction:"goTo('r2')" });
-}
-
-// ── Expert screens
-function renderX1() {
-  return questionScreen({ id:'x1', screenId:'x1', label:'Expert', step:'1 / 4', progress:1/4,
-    q:'주로 어떤 커피를\n즐기시나요?',
-    items:[{t:'에스프레소 베이스',s:'아메리카노 · 플랫화이트'},{t:'싱글 오리진 핸드드립',s:'원두 본연의 테루아를 즐김'},{t:'콜드브루 · 니트로'},{t:'그때그때 달라요'}],
-    nextAction:"goTo('x2')" });
-}
-function renderX2() {
-  return questionScreen({ id:'x2', screenId:'x2', label:'Expert', step:'2 / 4', progress:2/4,
-    q:'선호하는 가공 방식이\n있으신가요?',
-    items:[{t:'워시드 (Washed)',s:'깔끔하고 선명한 산미'},{t:'내추럴 (Natural)',s:'풍부한 과육향 · 높은 바디'},{t:'허니 (Honey)',s:'단맛과 바디의 균형'},{t:'무산소 발효 · 특수 프로세싱',s:'실험적인 풍미 선호'}],
-    nextAction:"goTo('x3')" });
-}
-function renderX3() {
-  return questionScreen({ id:'x3', screenId:'x3', label:'Expert', step:'3 / 4', progress:3/4,
-    q:'선호하는 로스팅\n포인트는?',
-    items:[{t:'라이트 로스트',s:'산미 · 플로럴 · 복합적 향미'},{t:'미디엄 로스트',s:'산미와 바디의 균형'},{t:'다크 로스트',s:'낮은 산미 · 다크초콜릿 · 스모키'}],
-    nextAction:"goTo('x4')" });
-}
-function renderX4() {
-  return questionScreen({ id:'x4', screenId:'x4', label:'Expert', step:'4 / 4', progress:1,
-    q:'오늘은 어떤 경험을\n원하세요?', cta:'결과 보기',
-    items:[{t:'늘 마시던 것처럼',s:'익숙한 취향으로'},{t:'비슷하지만 조금 새롭게',s:'취향의 경계를 살짝 넓혀서'},{t:'완전히 새로운 것으로',s:'오늘은 도전해볼게요'}],
-    nextAction:"goTo('r3')" });
-}
-
-// ── Result screens
-function resultShell(label, inner) {
-  return `<div class="screen" id="screen-${label}">
-    ${statusBar()}
-    <div class="body">
-      <div class="r-logo-wrap"><span class="r-logo">wahi</span></div>
-      <div class="section-label" style="margin-bottom:14px">WAHI'S PICK</div>
-      ${inner}
-    </div>
-  </div>`;
-}
-
-function renderR1() {
-  return resultShell('r1', `
-    <div class="coffee-card">
-      <h2 class="coffee-name">에티오피아 예가체프</h2>
-      <div class="coffee-brew">핸드드립</div>
-      <div class="tags"><span class="tag">딸기</span><span class="tag">복숭아</span><span class="tag">재스민</span></div>
-      <div class="meters">
-        ${dotMeter('산미', 4)}${dotMeter('바디', 2)}${dotMeter('단맛', 3)}
+    <!-- ABOUT / BRAND PROBLEM -->
+    <section class="about" id="about">
+      <div class="wrap about__grid">
+        <h2 class="about__headline" data-aos="fade-up" data-aos-duration="900">
+          커피는 매일 마시는데,<br>여전히 뭘 골라야할지 <br>모르겠다면</h2>
+        <div class="about__body" data-aos="fade-up" data-aos-duration="900" data-aos-delay="150">
+          <p>wahi는 그 불편함에서 시작되었습니다. <br>
+            <br>스페셜티 카페의 진입장벽을 없애고, <br>나만의 취향을 찾을 수 있는 공간을 만들었습니다.
+          </p>
+          <p class="about__body-en">No jargon, no pressure —
+            <br>just a quiet way to find the cup that's yours.
+          </p>
+        </div>
       </div>
-    </div>
-    <div class="why-box">
-      <p class="why-h">왜 이 커피인가요?</p>
-      <p class="why-b">맑고 가벼운 날에 잘 어울리는, 과일향 가득한 커피예요. 산뜻한 산미가 기분을 가볍게 띄워줘요. 처음이라도 부담 없이 즐기기 좋아요.</p>
-    </div>
-    <div class="r-actions">
-      ${primaryBtn('주문하기', '', true)}
-      ${secondaryBtn('다시 찾아보기', "resetFlow()")}
-    </div>`);
-}
+      <img class="img_coffee" src="./img/커피 머신.jpg" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="100">
+    </section>
 
-function renderR2() {
-  return resultShell('r2', `
-    <div class="coffee-card">
-      <h2 class="coffee-name">콜롬비아 후일라</h2>
-      <div class="coffee-brew">핸드드립</div>
-      <div class="tags"><span class="tag">오렌지</span><span class="tag">캐러멜</span><span class="tag">꿀</span></div>
-      <div class="meters">
-        ${dotMeter('산미', 3)}${dotMeter('바디', 3)}${dotMeter('단맛', 4)}
+    <!-- PHILOSOPHY -->
+    <section class="phil">
+      <div class="wrap phil__grid">
+        <div class="phil__card" data-aos="fade-up" data-aos-duration="800">
+          <img class="bean" src="./img/bean.png" alt="">
+          <h3 class="phil__title">진입장벽 없는 전문성</h3>
+          <p class="phil__desc">스페셜티의 깊이는 그대로,
+            <br>어렵게 느껴지던 문턱만 덜어냈습니다.
+          </p>
+        </div>
+        <div class="phil__card" data-aos="fade-up" data-aos-duration="800" data-aos-delay="150">
+          <img class="bean" src="./img/bean.png" alt="">
+          <h3 class="phil__title">취향은 질문에서 시작</h3>
+          <p class="phil__desc">세 개의 단순한 질문이
+            <br>당신의 한 잔으로 이어집니다.
+          </p>
+        </div>
+        <div class="phil__card" data-aos="fade-up" data-aos-duration="800" data-aos-delay="300">
+          <img class="bean" src="./img/bean.png" alt="">
+          <h3 class="phil__title">한 잔이 전부를 바꾼다</h3>
+          <p class="phil__desc">제대로 만난 한 잔은 <br>커피를 대하는 방식을 바꿔 놓습니다.</p>
+        </div>
       </div>
-      <div class="coffee-info">
-        <div class="coffee-info-row"><span class="coffee-info-key">가공방식</span><span class="coffee-info-val">허니</span></div>
-        <div class="coffee-info-row"><span class="coffee-info-key">산지</span><span class="coffee-info-val">콜롬비아 후일라</span></div>
-      </div>
-    </div>
-    <div class="why-box">
-      <p class="why-h">왜 이 커피인가요?</p>
-      <p class="why-b">적당한 산미와 균형 잡힌 단맛을 좋아하는 취향에 맞췄어요. 허니 가공이 만든 부드러운 단맛이 오래 남아요.</p>
-    </div>
-    <div class="rec-wrap">
-      <div class="rec-label">ALSO FOR YOU</div>
-      <p class="rec-sub">이런 커피도 좋아하실 것 같아요</p>
-      <div class="rec-item">
-        <span><span class="rec-name">과테말라 안티구아</span><span class="rec-desc" style="display:block">부드러운 초콜릿 바디, 낮은 산미</span></span>
-        <span class="rec-chev">${CHEVRON}</span>
-      </div>
-    </div>
-    <div class="r-actions">
-      ${primaryBtn('주문하기', '', true)}
-      ${secondaryBtn('다시 찾아보기', "resetFlow()")}
-    </div>`);
-}
+    </section>
 
-function renderR3() {
-  return resultShell('r3', `
-    <div class="coffee-card">
-      <h2 class="coffee-name">에티오피아 게이샤</h2>
-      <div class="coffee-brew">싱글 오리진 핸드드립</div>
-      <div class="tags"><span class="tag">재스민</span><span class="tag">베르가못</span><span class="tag">리치</span></div>
-      <div class="meters">
-        ${dotMeter('산미', 4)}${dotMeter('바디', 3)}${dotMeter('단맛', 4)}${dotMeter('복잡도', 5)}
+    <!-- EXPERIENCE -->
+    <section class="exp" id="experience">
+      <div class="wrap">
+        <div class="exp__head">
+          <span class="wk-label" data-aos="fade-up">The Experience</span>
+          <h2 class="exp__headline"><img class="headline_logo" src="./img/w_text.png" alt="wtext">와 함께 시작하세요</h2>
+        </div>
+        <div class="exp__flow">
+          <div class="exp__step" data-aos="fade-up" data-aos-delay="0">
+            <span class="exp__num">01</span>
+            <h3 class="exp__title">QR 스캔</h3>
+            <p class="exp__desc">테이블 위 QR 코드를 스캔하세요.</p>
+            <span class="exp__arrow" aria-hidden="true"></span>
+          </div>
+          <div class="exp__step" data-aos="fade-up" data-aos-delay="150">
+            <span class="exp__num">02</span>
+            <h3 class="exp__title">취향 선택</h3>
+            <p class="exp__desc">세 가지 감각 질문에 답하세요. <br> 커피 지식은 필요 없어요.</p>
+            <span class="exp__arrow" aria-hidden="true"></span>
+          </div>
+          <div class="exp__step" data-aos="fade-up" data-aos-delay="300">
+            <span class="exp__num">03</span>
+            <h3 class="exp__title">나만의 한 잔</h3>
+            <p class="exp__desc">wahi가 당신의 완벽한 <br>한 잔을 추천합니다.</p>
+          </div>
+        </div>
+        <div class="exp__phone">
+          <div class="phone">
+            <div class="phone__notch"></div>
+            <div class="phone__screen">
+              <span class="phone__label">wahi curation<br />UI preview</span>
+            </div>
+          </div>
+        </div>
+        <div class="exp__cta">
+          <button class="wk-ghost wk-ghost--light wk-ghost--lg">경험해보기</button>
+        </div>
       </div>
-      <div class="coffee-info">
-        <div class="coffee-info-row"><span class="coffee-info-key">산지</span><span class="coffee-info-val">게데오, 에티오피아</span></div>
-        <div class="coffee-info-row"><span class="coffee-info-key">고도</span><span class="coffee-info-val">2,000–2,200m</span></div>
-        <div class="coffee-info-row"><span class="coffee-info-key">가공방식</span><span class="coffee-info-val">내추럴</span></div>
-        <div class="coffee-info-row"><span class="coffee-info-key">로스트</span><span class="coffee-info-val">라이트</span></div>
-        <div class="coffee-info-row"><span class="coffee-info-key">품종</span><span class="coffee-info-val">게이샤</span></div>
+    </section>
+
+    <!-- MENU -->
+    <section class="menu" id="menu">
+      <div class="wrap">
+        <div class="menu__head">
+          <span class="wk-label">Menu</span>
+          <h2 class="menu__headline">오늘의 추천</h2>
+        </div>
+        <div class="menu__grid">
+          <article class="wk-coffee wk-coffee--ink">
+            <div class="wk-coffee__photo">
+              <img src="./img/coffee-ethiopia.jpg" alt="에티오피아 예가체프">
+            </div>
+            <div class="wk-coffee__origin"><span class="wk-tag wk-tag--onDark">Ethiopia</span></div>
+            <h3 class="wk-coffee__name">에티오피아 예가체프</h3>
+            <div class="wk-coffee__notes"><span class="wk-tag wk-tag--onDark wk-tag--plain">과일향 · 산미 · 가벼운 바디</span>
+            </div>
+            <div class="wk-coffee__meters">
+              <div class="wk-meter wk-meter--onDark"><span class="wk-meter__label">산미</span>
+                <div class="wk-meter__dots"><span class="wk-meter__dot wk-meter__dot--on"></span><span
+                    class="wk-meter__dot wk-meter__dot--on"></span><span
+                    class="wk-meter__dot wk-meter__dot--on"></span><span
+                    class="wk-meter__dot wk-meter__dot--on"></span><span class="wk-meter__dot"></span></div>
+              </div>
+              <div class="wk-meter wk-meter--onDark"><span class="wk-meter__label">바디</span>
+                <div class="wk-meter__dots"><span class="wk-meter__dot wk-meter__dot--on"></span><span
+                    class="wk-meter__dot wk-meter__dot--on"></span><span class="wk-meter__dot"></span><span
+                    class="wk-meter__dot"></span><span class="wk-meter__dot"></span></div>
+              </div>
+              <div class="wk-meter wk-meter--onDark"><span class="wk-meter__label">단맛</span>
+                <div class="wk-meter__dots"><span class="wk-meter__dot wk-meter__dot--on"></span><span
+                    class="wk-meter__dot wk-meter__dot--on"></span><span
+                    class="wk-meter__dot wk-meter__dot--on"></span><span class="wk-meter__dot"></span><span
+                    class="wk-meter__dot"></span></div>
+              </div>
+            </div>
+          </article>
+
+          <article class="wk-coffee">
+            <div class="wk-coffee__photo">
+              <img src="./img/coffee-colombia.jpg" alt="콜롬비아 수프리모">
+            </div>
+            <div class="wk-coffee__origin"><span class="wk-tag">Colombia</span></div>
+            <h3 class="wk-coffee__name">콜롬비아 수프리모</h3>
+            <div class="wk-coffee__notes"><span class="wk-tag wk-tag--plain">초콜릿 · 견과류 · 묵직한 바디</span></div>
+            <div class="wk-coffee__meters">
+              <div class="wk-meter"><span class="wk-meter__label">산미</span>
+                <div class="wk-meter__dots"><span class="wk-meter__dot wk-meter__dot--on"></span><span
+                    class="wk-meter__dot wk-meter__dot--on"></span><span class="wk-meter__dot"></span><span
+                    class="wk-meter__dot"></span><span class="wk-meter__dot"></span></div>
+              </div>
+              <div class="wk-meter"><span class="wk-meter__label">바디</span>
+                <div class="wk-meter__dots"><span class="wk-meter__dot wk-meter__dot--on"></span><span
+                    class="wk-meter__dot wk-meter__dot--on"></span><span
+                    class="wk-meter__dot wk-meter__dot--on"></span><span
+                    class="wk-meter__dot wk-meter__dot--on"></span><span class="wk-meter__dot"></span></div>
+              </div>
+              <div class="wk-meter"><span class="wk-meter__label">단맛</span>
+                <div class="wk-meter__dots"><span class="wk-meter__dot wk-meter__dot--on"></span><span
+                    class="wk-meter__dot wk-meter__dot--on"></span><span
+                    class="wk-meter__dot wk-meter__dot--on"></span><span
+                    class="wk-meter__dot wk-meter__dot--on"></span><span class="wk-meter__dot"></span></div>
+              </div>
+            </div>
+          </article>
+
+          <article class="wk-coffee wk-coffee--ink">
+            <div class="wk-coffee__photo">
+              <img src="./img/coffee-guatemala.jpg" alt="과테말라 안티구아">
+            </div>
+            <div class="wk-coffee__origin"><span class="wk-tag wk-tag--onDark">Guatemala</span></div>
+            <h3 class="wk-coffee__name">과테말라 안티구아</h3>
+            <div class="wk-coffee__notes"><span class="wk-tag wk-tag--onDark wk-tag--plain">카라멜 · 균형감 · 부드러운 끝맛</span>
+            </div>
+            <div class="wk-coffee__meters">
+              <div class="wk-meter wk-meter--onDark"><span class="wk-meter__label">산미</span>
+                <div class="wk-meter__dots"><span class="wk-meter__dot wk-meter__dot--on"></span><span
+                    class="wk-meter__dot wk-meter__dot--on"></span><span
+                    class="wk-meter__dot wk-meter__dot--on"></span><span class="wk-meter__dot"></span><span
+                    class="wk-meter__dot"></span></div>
+              </div>
+              <div class="wk-meter wk-meter--onDark"><span class="wk-meter__label">바디</span>
+                <div class="wk-meter__dots"><span class="wk-meter__dot wk-meter__dot--on"></span><span
+                    class="wk-meter__dot wk-meter__dot--on"></span><span
+                    class="wk-meter__dot wk-meter__dot--on"></span><span class="wk-meter__dot"></span><span
+                    class="wk-meter__dot"></span></div>
+              </div>
+              <div class="wk-meter wk-meter--onDark"><span class="wk-meter__label">단맛</span>
+                <div class="wk-meter__dots"><span class="wk-meter__dot wk-meter__dot--on"></span><span
+                    class="wk-meter__dot wk-meter__dot--on"></span><span
+                    class="wk-meter__dot wk-meter__dot--on"></span><span class="wk-meter__dot"></span><span
+                    class="wk-meter__dot"></span></div>
+              </div>
+            </div>
+          </article>
+        </div>
       </div>
+    </section>
+
+    <!-- BRAND STATEMENT -->
+    <section class="statement" id="statementSection">
+      <div class="statement__slide active" style="background-image: url('./img/statement-1.jpg');"></div>
+      <div class="statement__slide" style="background-image: url('./img/statement-2.jpg');"></div>
+      <div class="statement__slide" style="background-image: url('./img/statement-3.jpg');"></div>
+      <div class="statement__slide" style="background-image: url('./img/statement-4.jpg');"></div>
+      <div class="statement__slide" style="background-image: url('./img/statement-5.jpg');"></div>
+      <div class="statement__overlay"></div>
+
+      <div class="statement__inner">
+        <p class="statement__text" id="statementText">취향은 타고나는 게 아니라<br />경험으로 시작된다.</p>
+
+        <div class="logo_sta-wrap wahi-smoke-trigger">
+          <canvas class="wahi-smoke-canvas" width="180" height="140"></canvas>
+          <img class="logo_sta" id="statementLogo" src="./img/logo_w.png" alt="w_logo">
+        </div>
+      </div>
+
+      <div class="statement__dots" id="statementDots"></div>
+      <!-- 기존 오버레이 추가 -->
+      <div class="hero__overlay"></div>
+    </section>
+
+    <!-- CONTACT -->
+    <section class="contact" id="contact">
+      <img src="./img/입간판.jpg" alt="store">
+      <div class="wrap contact__grid">
+        <div class="contact__info">
+          <span class="wk-label">Visit</span>
+          <h2 class="contact__headline">매장에서 만나요</h2>
+          <div class="contact__rows">
+            <div class="contact__row"><span class="contact__k">Address</span><span class="contact__v">부산시 전포동
+                카페거리</span></div>
+            <div class="contact__row"><span class="contact__k">Hours</span><span class="contact__v">매일 09:00 —
+                22:00</span></div>
+            <div class="contact__row"><span class="contact__k">Instagram</span><a class="contact__v contact__ig"
+                href="https://instagram.com/wahi">@wahi</a></div>
+          </div>
+        </div>
+        <div class="contact__qr">
+          <div class="qr">
+            <div class="qr__box" aria-hidden="true">
+              <i data-lucide="qr-code"></i>
+            </div>
+            <p class="qr__cap">매장 방문 시 QR로<br />취향을 찾아보세요</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="foot">
+    <div class="wrap foot__inner">
+      <div class="foot__brand wahi-smoke-trigger">
+        <canvas class="wahi-smoke-canvas" width="140" height="110"></canvas>
+        <img class="foot__logo" src="./img/logo_w.png" alt="w_logo">
+        <p class="foot__tag">당신의 커피 취향이 시작되는 곳</p>
+      </div>
+      <nav class="foot__links">
+        <a href="#about">About</a>
+        <a href="#experience">Experience</a>
+        <a href="#menu">Menu</a>
+        <a href="#contact" aria-label="Instagram" class="foot__ig"><i data-lucide="instagram"></i></a>
+      </nav>
     </div>
-    <div class="rec-wrap">
-      <div class="rec-label">STRETCH YOUR TASTE</div>
-      <p class="rec-sub">취향 경계를 넓혀보고 싶다면</p>
-      <div class="rec-item">
-        <span><span class="rec-name">케냐 키암부 AA</span><span class="rec-desc" style="display:block">블랙커런트의 강렬한 산미로 한 걸음 더</span></span>
-        <span class="rec-chev">${CHEVRON}</span>
-      </div>
-      <div class="rec-item">
-        <span><span class="rec-name">파나마 게이샤 무산소</span><span class="rec-desc" style="display:block">발효가 빚은 와인 같은 복합미</span></span>
-        <span class="rec-chev">${CHEVRON}</span>
-      </div>
-    </div>
-    <div class="r-actions">
-      ${primaryBtn('주문하기', '', true)}
-      ${secondaryBtn('다시 찾아보기', "resetFlow()")}
-    </div>`);
-}
+    <div class="wrap foot__copy">© 2026 wahi. All rights reserved.</div>
+  </footer>
 
-function resetFlow() {
-  state.level = null;
-  state.step = 0;
-  state.answers = {};
-  state.history = [];
-  goTo('start', false);
-}
+  <script src="https://unpkg.com/lucide@0.456.0/dist/umd/lucide.min.js"></script>
 
-// ── Render ─────────────────────────────────────────────
-const RENDERERS = {
-  splash: renderSplash,
-  start: renderStart,
-  b1: renderB1, b2: renderB2, b3: renderB3,
-  e1: renderE1, e2: renderE2, e3: renderE3, e4: renderE4,
-  x1: renderX1, x2: renderX2, x3: renderX3, x4: renderX4,
-  r1: renderR1, r2: renderR2, r3: renderR3,
-};
+  <!-- AOS JS 추가 -->
+  <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
 
-function render() {
-  const fn = RENDERERS[state.screen];
-  if (!fn) return;
-  document.getElementById('app').innerHTML = fn();
-  updateClock();
-}
 
-// Initial render
-render();
-</script>
+  <script>
+    // AOS 초기화
+    AOS.init({
+      duration: 900,
+      easing: 'ease-out-cubic',
+      once: true,
+      offset: 80
+    });
+    // Init icons
+    window.addEventListener('DOMContentLoaded', () => {
+      if (window.lucide) lucide.createIcons();
+    });
+
+    // Nav scroll solid
+    const nav = document.getElementById('wnav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('wnav--solid', window.scrollY > 40);
+    }, { passive: true });
+
+    // Mobile menu
+    const burger = document.getElementById('nav-burger');
+    const overlay = document.getElementById('nav-overlay');
+    const closeBtn = document.getElementById('nav-close');
+    burger.addEventListener('click', () => {
+      overlay.classList.add('is-open');
+      lucide.createIcons();
+    });
+    closeBtn.addEventListener('click', () => overlay.classList.remove('is-open'));
+    overlay.querySelectorAll('a').forEach(a => {
+      a.addEventListener('click', () => overlay.classList.remove('is-open'));
+    });
+
+    // Smooth scroll for all anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', e => {
+        const target = document.querySelector(a.getAttribute('href'));
+        if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth' }); }
+      });
+    });
+
+    // ===== Hero 연기 파티클 =====
+    (function () {
+      const canvas = document.getElementById('smokeCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+
+      const density = 3;   // 1~5, 연기 양
+      const speed = 2;     // 1~5, 올라오는 속도
+      const colorMode = 1; // 0:크리마 1:화이트 2:블루
+
+      class Particle {
+        constructor() { this.reset(); }
+        reset() {
+          this.x = canvas.width / 2 + (Math.random() - 0.5) * 60;
+          this.y = canvas.height - 40;
+          this.vx = (Math.random() - 0.5) * 0.4;
+          this.vy = -(0.3 + Math.random() * 0.5) * speed * 0.5;
+          this.life = Math.floor(Math.random() * 60);
+          this.maxLife = 90 + Math.random() * 80;
+          this.size = 6 + Math.random() * 10;
+          this.angle = Math.random() * Math.PI * 2;
+          this.spin = (Math.random() - 0.5) * 0.02;
+          this.waver = (Math.random() - 0.5) * 0.015;
+        }
+        update() {
+          this.life++;
+          this.x += this.vx + Math.sin(this.life * this.waver * 10) * 0.3;
+          this.y += this.vy * speed * 0.5;
+          this.angle += this.spin;
+          this.size += 0.15;
+          this.vx += (Math.random() - 0.5) * 0.04;
+          if (this.life >= this.maxLife) this.reset();
+        }
+        draw() {
+          const progress = this.life / this.maxLife;
+          const alpha = progress < 0.2
+            ? (progress / 0.2) * 0.18
+            : progress > 0.7
+              ? ((1 - progress) / 0.3) * 0.18
+              : 0.18;
+
+          let r, g, b;
+          if (colorMode === 0) { r = 245; g = 236; b = 215; }
+          else if (colorMode === 1) { r = 255; g = 255; b = 255; }
+          else { r = 180; g = 210; b = 255; }
+
+          ctx.save();
+          ctx.translate(this.x, this.y);
+          ctx.rotate(this.angle);
+          const grad = ctx.createRadialGradient(0, 0, 0, 0, 0, this.size);
+          grad.addColorStop(0, `rgba(${r},${g},${b},${alpha})`);
+          grad.addColorStop(1, `rgba(${r},${g},${b},0)`);
+          ctx.fillStyle = grad;
+          ctx.beginPath();
+          ctx.arc(0, 0, this.size, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        }
+      }
+
+      const particles = [];
+      for (let i = 0; i < density * 6; i++) particles.push(new Particle());
+
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles.forEach(p => { p.update(); p.draw(); });
+        requestAnimationFrame(animate);
+      }
+      animate();
+    })();
+
+    // ===== 호버 시 터지는 연기 (Nav/Footer 공용) =====
+    (function () {
+      const triggers = document.querySelectorAll('.wahi-smoke-trigger');
+
+      triggers.forEach(trigger => {
+        const canvas = trigger.querySelector('.wahi-smoke-canvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+
+        let particles = [];
+        let animId = null;
+        let spawning = false;
+
+        class HoverParticle {
+          constructor() {
+            this.x = canvas.width / 2 + (Math.random() - 0.5) * (canvas.width * 0.3);
+            this.y = canvas.height - 10;
+            this.vx = (Math.random() - 0.5) * 0.5;
+            this.vy = -(0.5 + Math.random() * 0.6);
+            this.life = 0;
+            this.maxLife = 50 + Math.random() * 30;
+            this.size = 4 + Math.random() * 6;
+            this.angle = Math.random() * Math.PI * 2;
+            this.spin = (Math.random() - 0.5) * 0.03;
+          }
+          update() {
+            this.life++;
+            this.x += this.vx;
+            this.y += this.vy;
+            this.angle += this.spin;
+            this.size += 0.12;
+          }
+          draw() {
+            const progress = this.life / this.maxLife;
+            const alpha = progress < 0.15
+              ? (progress / 0.15) * 0.5
+              : progress > 0.6
+                ? ((1 - progress) / 0.4) * 0.5
+                : 0.5;
+            ctx.save();
+            ctx.translate(this.x, this.y);
+            ctx.rotate(this.angle);
+            const grad = ctx.createRadialGradient(0, 0, 0, 0, 0, this.size);
+            grad.addColorStop(0, `rgba(255,255,255,${alpha})`);
+            grad.addColorStop(1, `rgba(255,255,255,0)`);
+            ctx.fillStyle = grad;
+            ctx.beginPath();
+            ctx.arc(0, 0, this.size, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+          }
+        }
+
+        function spawnLoop() {
+          if (!spawning) return;
+          particles.push(new HoverParticle());
+          setTimeout(spawnLoop, 90);
+        }
+
+        function animate() {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          particles.forEach(p => p.update());
+          particles = particles.filter(p => p.life < p.maxLife);
+          particles.forEach(p => p.draw());
+          animId = requestAnimationFrame(animate);
+        }
+
+        trigger.addEventListener('mouseenter', () => {
+          spawning = true;
+          spawnLoop();
+          if (!animId) animate();
+        });
+
+        trigger.addEventListener('mouseleave', () => {
+          spawning = false;
+        });
+      });
+    })();
+
+    // 취향 - 이 부분 효과
+    // ===== Statement 글자별 순차 등장 =====
+    (function () {
+      const el = document.getElementById('statementText');
+      const logo = document.getElementById('statementLogo');
+      if (!el) return;
+
+      const rawHTML = el.innerHTML;
+      const parts = rawHTML.split(/(<br\s*\/?>)/i);
+
+      el.innerHTML = '';
+      parts.forEach(part => {
+        if (/<br/i.test(part)) {
+          el.appendChild(document.createElement('br'));
+        } else {
+          [...part].forEach(ch => {
+            const span = document.createElement('span');
+            span.className = 'statement__char';
+            span.textContent = ch === ' ' ? '\u00A0' : ch;
+            el.appendChild(span);
+          });
+        }
+      });
+
+      const chars = el.querySelectorAll('.statement__char');
+      let played = false;
+      const charDelay = 45; // 글자 간 간격 (ms)
+      const logoExtraPause = 400; // 텍스트 끝난 후 로고 등장까지 추가 여백 (ms)
+
+      function playReveal() {
+        if (played) return;
+        played = true;
+
+        chars.forEach((c, i) => {
+          setTimeout(() => c.classList.add('is-visible'), i * charDelay);
+        });
+
+        // 마지막 글자가 등장한 시점 + 여백 후 로고 등장
+        const totalCharTime = chars.length * charDelay;
+        if (logo) {
+          setTimeout(() => {
+            logo.classList.add('is-visible');
+          }, totalCharTime + logoExtraPause);
+        }
+      }
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) playReveal();
+        });
+      }, { threshold: 0.4 });
+
+      observer.observe(el);
+    })();
+
+    // ===== Statement 배경 슬라이드 =====
+    (function () {
+      const slides = document.querySelectorAll('#statementSection .statement__slide');
+      const dotsWrap = document.getElementById('statementDots');
+      if (!slides.length || !dotsWrap) return;
+
+      let current = 0;
+
+      slides.forEach((s, i) => {
+        const dot = document.createElement('div');
+        dot.className = 'statement__dot' + (i === 0 ? ' is-on' : '');
+        dotsWrap.appendChild(dot);
+      });
+      const dots = dotsWrap.querySelectorAll('.statement__dot');
+
+      function nextSlide() {
+        slides[current].classList.remove('active');
+        dots[current].classList.remove('is-on');
+        current = (current + 1) % slides.length;
+        slides[current].classList.add('active');
+        dots[current].classList.add('is-on');
+      }
+
+      setInterval(nextSlide, 4000); // 4초마다 전환
+    })();
+
+    // ===== Statement 글자별 순차 등장 + 로고 딜레이 (기존 코드 유지) =====
+    (function () {
+      const el = document.getElementById('statementText');
+      const logo = document.getElementById('statementLogo');
+      if (!el) return;
+
+      // ... 이전에 드린 글자 reveal 코드 그대로 ...
+    })();
+  </script>
 </body>
+
 </html>
