@@ -11,6 +11,13 @@ ul{
     list-style: none;
 }
 
+/* 마우스 설정하기 */
+/* 전체 요소를 선택하여 강제로 커서 고정 */
+* {
+  cursor: url('../img/mouse.png') 10 10, auto !important;
+}
+
+
 
 /* ── Design Tokens ── */
 :root {
@@ -86,10 +93,10 @@ body {
 body {
     background: var(--surface-base);
     color: var(--text-primary);
-    font-family: var(--font-body);
     -webkit-font-smoothing: antialiased;
     word-break: keep-all;
-    text-wrap: pretty
+    text-wrap: pretty;
+    font-family : 'SUIT', sans-serif;
 }
 
 img {
@@ -150,7 +157,6 @@ section {
 }
 
 .wnav__link {
-    font-family: var(--font-body-en);
     font-size: 12px;
     letter-spacing: .2em;
     text-transform: uppercase;
@@ -211,7 +217,6 @@ section {
 }
 
 .wnav__overlayMenu a {
-    font-family: var(--font-display);
     font-weight: var(--weight-extralight);
     font-size: 32px;
     letter-spacing: .08em;
@@ -259,7 +264,6 @@ section {
     justify-content: center;
     gap: .7em;
     box-sizing: border-box;
-    font-family: var(--font-body-en);
     text-transform: uppercase;
     text-decoration: none;
     color: var(--_fg);
@@ -314,7 +318,6 @@ section {
 /* ── Section Label ── */
 .wk-label {
     display: inline-block;
-    font-family: var(--font-body-en);
     font-size: 15px;
     letter-spacing: var(--tracking-label);
     text-transform: uppercase;
@@ -341,7 +344,6 @@ section {
 .wk-tag {
     display: inline-flex;
     align-items: center;
-    font-family: var(--font-body);
     font-size: 12px;
     letter-spacing: .06em;
     line-height: 1;
@@ -372,7 +374,6 @@ section {
     display: flex;
     align-items: center;
     gap: 14px;
-    font-family: var(--font-body)
 }
 
 .wk-meter__label {
@@ -438,7 +439,6 @@ section {
 }
 
 .wk-coffee__name {
-    font-family: var(--font-display);
     font-weight: var(--weight-light);
     font-size: var(--fs-title);
     line-height: var(--leading-tight);
@@ -481,7 +481,6 @@ section {
 }
 
 .hero__tagline {
-    font-family: var(--font-display);
     font-weight: var(--weight-extralight);
     font-size: 30px;
     letter-spacing: .08em;
@@ -491,7 +490,6 @@ section {
 }
 
 .hero__sub {
-    font-family: var(--font-body-en);
     font-size: 13px;
     letter-spacing: .28em;
     text-transform: uppercase;
@@ -511,7 +509,6 @@ section {
 }
 
 .hero__scroll span {
-    font-family: var(--font-body-en);
     font-size: 10px;
     letter-spacing: .34em;
     text-transform: uppercase;
@@ -588,7 +585,7 @@ section {
 /* ── About ── */
 .about {
     background: var(--surface-base);
-    padding: var(--section-py) 0
+    padding: var(--section-py) 0;
 }
 
 .about__grid {
@@ -601,7 +598,6 @@ section {
 }
 
 .about__headline {
-    font-family: var(--font-display);
     font-weight: 500;
     font-size: clamp(2rem, 3.6vw, 3.1rem);
     line-height: 1.6;
@@ -615,14 +611,12 @@ section {
 }
 
 .about__body p {
-    font-size: var(--fs-body-l);
     line-height: var(--leading-body);
     margin: 0;
     color: var(--text-primary)
 }
 
 .about__body-en {
-    font-family: var(--font-body-en);
     color: var(--text-muted);
     margin-top: 24px !important;
     font-size: var(--fs-body) !important
@@ -650,16 +644,6 @@ section {
     flex-direction: column
 }
 
-.phil__num {
-    font-family: var(--font-display);
-    font-weight: var(--weight-thin);
-    font-size: var(--fs-numeral);
-    line-height: 1;
-    color: var(--text-accent);
-    letter-spacing: .04em;
-    margin-bottom: 28px
-}
-
 .bean{
     width: 40px;
     margin: 20px;
@@ -667,7 +651,6 @@ section {
 }
 
 .phil__title {
-    font-family: var(--font-display);
     font-weight: 400;
     font-size: var(--fs-title);
     letter-spacing: .01em;
@@ -699,7 +682,6 @@ section {
 }
 
 .exp__headline {
-    font-family: var(--font-display);
     font-weight: var(--weight-extralight);
     font-size: clamp(1.9rem, 3.4vw, 2.8rem);
     letter-spacing: .05em;
@@ -739,7 +721,6 @@ section {
 }
 
 .exp__title {
-    font-family: var(--font-display);
     font-weight: var(--weight-light);
     font-size: var(--fs-title);
     letter-spacing: .04em;
@@ -810,7 +791,16 @@ section {
     border-radius: 22px;
     display: flex;
     align-items: center;
-    justify-content: center
+    justify-content: center;
+    z-index: 99;
+    overflow: hidden;
+}
+
+.phone__screen img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* [추가] 화면을 꽉 채우면서 비율 유지, 넘치는 부분은 잘림 */
+    object-position: top; /* [추가] 위쪽(상태바·헤더 영역) 기준으로 자르기 — 필요시 center로 변경 가능 */
 }
 
 .phone__label {
@@ -843,7 +833,6 @@ section {
 }
 
 .menu__headline {
-    font-family: var(--font-display);
     font-weight: 400;
     font-size: 35px;
     letter-spacing: .01em;
@@ -906,10 +895,9 @@ section {
     opacity: 0;
 }
 
-.wk-coffee:hover .wk-coffee__name {
+/* .wk-coffee:hover .wk-coffee__name {
     color: #fff;
     z-index: 6; /* 사진 위로 이름만 남기기 */
-}
 
 /* ── Statement ── */
 .statement {
@@ -930,9 +918,8 @@ section {
 }
 
 .statement__text {
-    font-family: var(--font-display);
     font-weight: 600;
-    font-size: 50px;
+    font-size: 30px;
     letter-spacing: .06em;
     line-height: 1.8;
     margin: 0;
@@ -1079,7 +1066,6 @@ section {
 }
 
 .contact__headline {
-    font-family: var(--font-display);
     font-weight: var(--weight-light);
     font-size: 30px;
     letter-spacing: .01em;
@@ -1103,7 +1089,6 @@ section {
 }
 
 .contact__k {
-    font-family: var(--font-body-en);
     font-size: 11px;
     letter-spacing: .22em;
     text-transform: uppercase;
@@ -1187,7 +1172,6 @@ section {
 }
 
 .foot__tag {
-    font-family: var(--font-body);
     font-size: var(--fs-body-s);
     color: var(--text-on-dark-muted);
     margin: 0;
@@ -1201,7 +1185,6 @@ section {
 }
 
 .foot__links a {
-    font-family: var(--font-body-en);
     font-size: 12px;
     letter-spacing: .18em;
     text-transform: uppercase;
@@ -1222,7 +1205,6 @@ section {
 .foot__copy {
     margin-top: 20px;
     margin-bottom: 10px;
-    font-family: var(--font-body-en);
     font-size: 11px;
     letter-spacing: .14em;
     text-transform: uppercase;
